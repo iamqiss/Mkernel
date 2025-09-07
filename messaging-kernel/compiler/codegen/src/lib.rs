@@ -6,9 +6,7 @@
 #![warn(rust_2018_idioms)]
 #![warn(missing_docs)]
 
-use neo_parser::{ServiceDefinition, MessageDefinition, RpcDefinition, EventDefinition};
-use quote::quote;
-use syn::parse_str;
+use neo_parser::ServiceDefinition;
 
 pub mod error;
 pub mod rust_generator;
@@ -16,14 +14,15 @@ pub mod rust_generator;
 pub use error::CodegenError;
 pub use rust_generator::RustGenerator;
 
-/// Result type for code generation operations
-pub type Result<T> = std::result::Result<T, CodegenError>;
-
 /// Generate Rust code for a service definition
 pub fn generate_rust_code(service: &ServiceDefinition) -> Result<String> {
     let generator = RustGenerator::new();
     generator.generate_service(service)
+        .map_err(|e| CodegenError::GenerationFailed(e.to_string()))
 }
+
+/// Result type for code generation operations
+pub type Result<T> = std::result::Result<T, CodegenError>;
 
 #[cfg(test)]
 mod tests {

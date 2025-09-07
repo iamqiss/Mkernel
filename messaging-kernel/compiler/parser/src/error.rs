@@ -46,6 +46,15 @@ pub enum ParserError {
         span: Span,
     },
 
+    /// Invalid duration literal
+    #[error("Invalid duration literal '{text}' at {span}")]
+    InvalidDurationLiteral {
+        /// The invalid duration text
+        text: String,
+        /// The span of the invalid duration
+        span: Span,
+    },
+
     /// Invalid retry policy type
     #[error("Invalid retry policy type '{policy_type}' at {span}")]
     InvalidRetryPolicyType {
@@ -210,6 +219,14 @@ impl ParserError {
     pub fn invalid_duration_unit(unit: impl Into<String>, span: Span) -> Self {
         Self::InvalidDurationUnit {
             unit: unit.into(),
+            span,
+        }
+    }
+
+    /// Create an invalid duration literal error
+    pub fn invalid_duration_literal(text: impl Into<String>, span: Span) -> Self {
+        Self::InvalidDurationLiteral {
+            text: text.into(),
             span,
         }
     }

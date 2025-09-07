@@ -1,8 +1,7 @@
 //! Qiss format codec for async operations
 
-use bytes::{Bytes, BytesMut};
 use tokio::io::{AsyncRead, AsyncWrite, AsyncReadExt, AsyncWriteExt};
-use crate::{Result, Error, QissSerializable, QissDeserializable, QissSerializer, QissDeserializer};
+use crate::{Result, QissSerializable, QissDeserializable, QissSerializer, QissDeserializer};
 
 /// Async codec for Qiss format
 pub struct QissCodec;

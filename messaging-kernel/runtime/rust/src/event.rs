@@ -1,6 +1,6 @@
 //! Event runtime implementation
 
-use crate::Result;
+use qiss_format::Result;
 
 /// Event handler trait
 #[async_trait::async_trait]

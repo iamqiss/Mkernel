@@ -178,7 +178,7 @@ impl FieldDescriptor {
     }
 
     /// Create a map field descriptor
-    pub fn map(name: String, key_type: FieldDescriptor, value_type: FieldDescriptor) -> Self {
+    pub fn map(name: String, _key_type: FieldDescriptor, value_type: FieldDescriptor) -> Self {
         // For simplicity, we'll use a single nested type for the value
         // In a more complex implementation, we'd need to handle both key and value types
         Self {

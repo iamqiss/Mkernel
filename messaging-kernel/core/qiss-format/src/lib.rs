@@ -11,8 +11,7 @@
 #![allow(clippy::cast_sign_loss)]
 
 use std::mem;
-use std::slice;
-use bytes::{Bytes, BytesMut, Buf, BufMut};
+use bytes::{Bytes, BytesMut, BufMut};
 use bytemuck::{Pod, Zeroable};
 use zerocopy::{AsBytes, FromBytes, FromZeroes, Unaligned};
 
@@ -227,156 +226,156 @@ impl QissDeserializer {
 /// Trait for types that can be serialized to Qiss format
 pub trait QissSerializable {
     /// Serialize this value to Qiss format
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()>;
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()>;
 }
 
 /// Trait for types that can be deserialized from Qiss format
 pub trait QissDeserializable: Sized {
     /// Deserialize this value from Qiss format
-    fn deserialize(reader: &mut QissReader) -> Result<Self>;
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self>;
 }
 
 // Implement QissSerializable for basic types
 impl QissSerializable for u8 {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_u8(*self)
     }
 }
 
 impl QissDeserializable for u8 {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         reader.read_u8()
     }
 }
 
 impl QissSerializable for u16 {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_u16(*self)
     }
 }
 
 impl QissDeserializable for u16 {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         reader.read_u16()
     }
 }
 
 impl QissSerializable for u32 {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_u32(*self)
     }
 }
 
 impl QissDeserializable for u32 {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         reader.read_u32()
     }
 }
 
 impl QissSerializable for u64 {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_u64(*self)
     }
 }
 
 impl QissDeserializable for u64 {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         reader.read_u64()
     }
 }
 
 impl QissSerializable for i8 {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_i8(*self)
     }
 }
 
 impl QissDeserializable for i8 {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         reader.read_i8()
     }
 }
 
 impl QissSerializable for i16 {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_i16(*self)
     }
 }
 
 impl QissDeserializable for i16 {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         reader.read_i16()
     }
 }
 
 impl QissSerializable for i32 {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_i32(*self)
     }
 }
 
 impl QissDeserializable for i32 {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         reader.read_i32()
     }
 }
 
 impl QissSerializable for i64 {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_i64(*self)
     }
 }
 
 impl QissDeserializable for i64 {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         reader.read_i64()
     }
 }
 
 impl QissSerializable for f32 {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_f32(*self)
     }
 }
 
 impl QissDeserializable for f32 {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         reader.read_f32()
     }
 }
 
 impl QissSerializable for f64 {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_f64(*self)
     }
 }
 
 impl QissDeserializable for f64 {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         reader.read_f64()
     }
 }
 
 impl QissSerializable for bool {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_bool(*self)
     }
 }
 
 impl QissDeserializable for bool {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         reader.read_bool()
     }
 }
 
 impl QissSerializable for String {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_string(self)
     }
 }
 
 impl QissDeserializable for String {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         reader.read_string()
     }
 }
@@ -385,13 +384,13 @@ impl QissDeserializable for String {
 pub struct ByteArray(pub Vec<u8>);
 
 impl QissSerializable for ByteArray {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_bytes(&self.0)
     }
 }
 
 impl QissDeserializable for ByteArray {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         Ok(ByteArray(reader.read_bytes()?))
     }
 }
@@ -400,7 +399,7 @@ impl<T: QissSerializable> QissSerializable for Vec<T>
 where
     T: QissSerializable,
 {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         writer.write_u32(self.len() as u32)?;
         for item in self {
             item.serialize(writer)?;
@@ -413,7 +412,7 @@ impl<T: QissDeserializable> QissDeserializable for Vec<T>
 where
     T: QissDeserializable,
 {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         let len = reader.read_u32()? as usize;
         let mut vec = Vec::with_capacity(len);
         for _ in 0..len {
@@ -424,7 +423,7 @@ where
 }
 
 impl<T: QissSerializable> QissSerializable for Option<T> {
-    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
+    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
         match self {
             Some(value) => {
                 writer.write_bool(true)?;
@@ -436,7 +435,7 @@ impl<T: QissSerializable> QissSerializable for Option<T> {
 }
 
 impl<T: QissDeserializable> QissDeserializable for Option<T> {
-    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
         if reader.read_bool()? {
             Ok(Some(T::deserialize(reader)?))
         } else {
