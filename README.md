@@ -304,4 +304,4 @@ Neo Messaging Kernel was inspired by the performance limitations i encountered w
 
 ---
 
-**Built with ⚡ by [Neo Qiss](https://github.com/neo-qiss) in Rust 🦀**
+**Built with ⚡ by [Neo Qiss](https://github.com/iamqiss) in Rust 🦀**
