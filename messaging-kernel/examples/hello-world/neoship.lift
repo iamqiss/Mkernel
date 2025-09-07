@@ -1,0 +1,66 @@
+# Neoship.lift - Neo Messaging Kernel Deployment Manifest
+
+manifest:
+  name: "user-microservice"
+  version: "1.0.0"
+  description: "Example user management microservice"
+
+services:
+  user-service:
+    source: "./user-service.neo"
+    runtime: "rust"
+    replicas: 3
+    resources:
+      cpu: "500m"
+      memory: "512Mi"
+    
+  notification-service:
+    source: "./notification-service.neo" 
+    runtime: "go"
+    replicas: 2
+    resources:
+      cpu: "250m"
+      memory: "256Mi"
+
+broker:
+  precursor:
+    persistence: true
+    storage_path: "/data/precursor"
+    max_message_size: "10MB"
+    retention_policy: "7d"
+    
+queues:
+  - name: "users.get"
+    partition_count: 4
+    replication_factor: 2
+    
+  - name: "users.create"
+    partition_count: 8
+    replication_factor: 3
+
+topics:
+  - name: "users.events"
+    partition_count: 16
+    replication_factor: 2
+    retention: "30d"
+
+network:
+  port: 8080
+  tls:
+    enabled: true
+    cert_path: "/etc/certs/server.crt"
+    key_path: "/etc/certs/server.key"
+
+monitoring:
+  metrics:
+    enabled: true
+    endpoint: "/metrics"
+  
+  tracing:
+    enabled: true
+    sampling_rate: 0.1
+    
+logging:
+  level: "info"
+  format: "json"
+  output: "stdout"

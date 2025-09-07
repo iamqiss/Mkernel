@@ -1,0 +1,52 @@
+// Example Neo service definition
+// This demonstrates the unified syntax for RPC, messaging, and configuration
+
+service UserService {
+    version = "1.0.0";
+    namespace = "com.example.users";
+    
+    // Define data structures
+    message User {
+        id: u64;
+        username: string;
+        email: string;
+        created_at: timestamp;
+        optional profile_image: string;
+    }
+    
+    message UserId {
+        id: u64;
+    }
+    
+    message UserCreatedEvent {
+        user: User;
+        created_by: string;
+    }
+    
+    // RPC methods with optional queue configuration
+    rpc GetUser(UserId) -> User {
+        queue = "users.get";
+        timeout = 5s;
+        retry_policy = exponential_backoff(max_attempts: 3);
+    }
+    
+    rpc CreateUser(User) -> UserId {
+        queue = "users.create";
+        timeout = 10s;
+    }
+    
+    // Event publishing
+    event UserCreated(UserCreatedEvent) {
+        topic = "users.events";
+        partition_key = user.id;
+        retention = 7d;
+    }
+    
+    // Service configuration
+    config {
+        max_concurrent_requests = 1000;
+        queue_buffer_size = 10000;
+        compression = lz4;
+        serialization = qiss;
+    }
+}

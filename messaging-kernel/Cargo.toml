@@ -1,0 +1,31 @@
+[workspace]
+resolver = "2"
+members = [
+    "core/neo-protocol",
+    "core/qiss-format", 
+    "core/precursor-broker",
+    "core/neoship-manifest",
+    "compiler/lexer",
+    "compiler/parser",
+    "compiler/codegen",
+    "compiler/cli",
+    "runtime/rust",
+    "tools/neo-cli",
+    "tools/debugger",
+    "tools/benchmarks"
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Neo Qiss"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/your-username/messaging-kernel"
+
+[workspace.dependencies]
+tokio = { version = "1.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+bytes = "1.0"
+thiserror = "1.0"
+anyhow = "1.0"
+tracing = "0.1"

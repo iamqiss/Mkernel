@@ -1,0 +1,24 @@
+[package]
+name = "qiss-format"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Binary serialization format optimized for speed"
+
+[dependencies]
+tokio.workspace = true
+serde.workspace = true
+bytes.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tokio-test = "0.4"
+criterion = "0.5"
+
+[[bench]]
+name = "benchmarks"
+harness = false
