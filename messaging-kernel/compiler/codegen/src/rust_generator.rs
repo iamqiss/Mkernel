@@ -3,7 +3,7 @@
 use neo_parser::{ServiceDefinition, MessageDefinition, RpcDefinition, EventDefinition};
 use neo_parser::ast::{FieldType, FieldDefinition};
 use quote::quote;
-use crate::{Result, CodegenError};
+use crate::Result;
 
 /// Rust code generator
 pub struct RustGenerator;
@@ -16,9 +16,9 @@ impl RustGenerator {
 
     /// Generate Rust code for a service definition
     pub fn generate_service(&self, service: &ServiceDefinition) -> Result<String> {
-        let service_name = &service.name;
-        let version = &service.version;
-        let namespace = &service.namespace;
+        let _service_name = &service.name;
+        let _version = &service.version;
+        let _namespace = &service.namespace;
 
         // Generate message structs
         let message_structs = self.generate_message_structs(&service.messages)?;
@@ -61,6 +61,9 @@ impl RustGenerator {
             let struct_name = &message.name;
             let fields = self.generate_message_fields(&message.fields)?;
 
+            let serialize_fields = self.generate_serialize_fields(&message.fields)?;
+            let deserialize_fields = self.generate_deserialize_fields(&message.fields)?;
+
             let struct_code = quote! {
                 #[derive(Debug, Clone, Serialize, Deserialize)]
                 pub struct #struct_name {
@@ -68,16 +71,16 @@ impl RustGenerator {
                 }
 
                 impl QissSerializable for #struct_name {
-                    fn serialize(&self, writer: &mut QissWriter) -> Result<()> {
-                        #(self.#fields.serialize(writer)?;)*
+                    fn serialize(&self, writer: &mut QissWriter<'_>) -> Result<()> {
+                        #serialize_fields
                         Ok(())
                     }
                 }
 
                 impl QissDeserializable for #struct_name {
-                    fn deserialize(reader: &mut QissReader) -> Result<Self> {
+                    fn deserialize(reader: &mut QissReader<'_>) -> Result<Self> {
                         Ok(Self {
-                            #fields: #fields::deserialize(reader)?,
+                            #deserialize_fields
                         })
                     }
                 }
@@ -143,10 +146,11 @@ impl RustGenerator {
             let event_name = &event.name;
             let message_type = &event.message_type;
 
+            let handler_method_name = syn::Ident::new(&format!("handle_{}", event_name), proc_macro2::Span::call_site());
             let handler_code = quote! {
                 #[async_trait]
                 pub trait #event_name {
-                    async fn handle_#event_name(&self, event: #message_type) -> Result<()>;
+                    async fn #handler_method_name(&self, event: #message_type) -> Result<()>;
                 }
             };
 
@@ -192,7 +196,7 @@ impl RustGenerator {
 
             let impl_code = quote! {
                 #[async_trait]
-                impl #rpc_name for #service_name {
+                impl #rpc_name for ServiceName {
                     async fn #rpc_name(&self, input: #input_type) -> Result<#output_type> {
                         // TODO: Implement RPC logic
                         todo!("Implement #rpc_name")
@@ -214,10 +218,11 @@ impl RustGenerator {
             let event_name = &event.name;
             let message_type = &event.message_type;
 
+            let handler_method_name = syn::Ident::new(&format!("handle_{}", event_name), proc_macro2::Span::call_site());
             let impl_code = quote! {
                 #[async_trait]
-                impl #event_name for #service_name {
-                    async fn handle_#event_name(&self, event: #message_type) -> Result<()> {
+                impl #event_name for ServiceName {
+                    async fn #handler_method_name(&self, event: #message_type) -> Result<()> {
                         // TODO: Implement event handling logic
                         todo!("Implement #event_name handler")
                     }
@@ -263,5 +268,60 @@ impl RustGenerator {
         };
 
         Ok(rust_type)
+    }
+
+    /// Generate serialize field code
+    fn generate_serialize_fields(&self, fields: &[FieldDefinition]) -> Result<proc_macro2::TokenStream> {
+        let mut serialize_tokens = Vec::new();
+
+        for field in fields {
+            let field_name = &field.name;
+            let field_name_ident = syn::Ident::new(field_name, proc_macro2::Span::call_site());
+            
+            let serialize_token = if field.optional {
+                quote! {
+                    if let Some(ref value) = self.#field_name_ident {
+                        value.serialize(writer)?;
+                    }
+                }
+            } else {
+                quote! {
+                    self.#field_name_ident.serialize(writer)?;
+                }
+            };
+
+            serialize_tokens.push(serialize_token);
+        }
+
+        Ok(quote! { #(#serialize_tokens)* })
+    }
+
+    /// Generate deserialize field code
+    fn generate_deserialize_fields(&self, fields: &[FieldDefinition]) -> Result<proc_macro2::TokenStream> {
+        let mut deserialize_tokens = Vec::new();
+
+        for field in fields {
+            let field_name = &field.name;
+            let field_name_ident = syn::Ident::new(field_name, proc_macro2::Span::call_site());
+            let field_type = self.rust_type_for_field_type(&field.field_type)?;
+            
+            let deserialize_token = if field.optional {
+                quote! {
+                    #field_name_ident: if reader.read_bool()? {
+                        Some(#field_type::deserialize(reader)?)
+                    } else {
+                        None
+                    },
+                }
+            } else {
+                quote! {
+                    #field_name_ident: #field_type::deserialize(reader)?,
+                }
+            };
+
+            deserialize_tokens.push(deserialize_token);
+        }
+
+        Ok(quote! { #(#deserialize_tokens)* })
     }
 }

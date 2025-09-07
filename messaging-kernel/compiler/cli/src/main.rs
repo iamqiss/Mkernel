@@ -34,25 +34,24 @@ enum Commands {
     },
 }
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::init();
 
     let cli = Cli::parse();
 
     match cli.command {
         Commands::Compile { input, output } => {
-            compile_file(input, output).await?;
+            compile_file(input, output)?;
         }
         Commands::Validate { input } => {
-            validate_file(input).await?;
+            validate_file(input)?;
         }
     }
 
     Ok(())
 }
 
-async fn compile_file(input: PathBuf, output: Option<PathBuf>) -> Result<(), Box<dyn std::error::Error>> {
+fn compile_file(input: PathBuf, output: Option<PathBuf>) -> Result<(), Box<dyn std::error::Error>> {
     let source = fs::read_to_string(&input)?;
     let service = parse(&source)?;
     let rust_code = generate_rust_code(&service)?;
@@ -67,7 +66,7 @@ async fn compile_file(input: PathBuf, output: Option<PathBuf>) -> Result<(), Box
     Ok(())
 }
 
-async fn validate_file(input: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
+fn validate_file(input: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
     let source = fs::read_to_string(&input)?;
     let _service = parse(&source)?;
     println!("File is valid: {}", input.display());

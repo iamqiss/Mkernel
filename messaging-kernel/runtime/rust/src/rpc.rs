@@ -1,6 +1,6 @@
 //! RPC runtime implementation
 
-use crate::Result;
+use qiss_format::Result;
 
 /// RPC handler trait
 #[async_trait::async_trait]

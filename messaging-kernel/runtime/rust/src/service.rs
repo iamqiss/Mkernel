@@ -1,7 +1,6 @@
 //! Service runtime implementation
 
-use tokio::task::JoinHandle;
-use crate::Result;
+use qiss_format::Result;
 
 /// A Neo service runtime
 pub struct Service {

@@ -1,6 +1,5 @@
 //! Qiss format reader implementation
 
-use bytes::{Bytes, Buf};
 use crate::{Result, Error, types::Timestamp};
 
 /// High-performance Qiss format reader

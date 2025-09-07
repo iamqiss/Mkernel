@@ -1,7 +1,7 @@
 //! Qiss format writer implementation
 
 use bytes::{BytesMut, BufMut};
-use crate::{Result, Error, types::Timestamp};
+use crate::{Result, types::Timestamp};
 
 /// High-performance Qiss format writer
 pub struct QissWriter<'a> {

@@ -292,7 +292,7 @@ impl Parser {
                 TokenKind::PartitionKey => {
                     self.advance();
                     self.expect_token(TokenKind::Equals)?;
-                    partition_key = Some(self.expect_identifier()?);
+                    partition_key = Some(self.parse_field_access()?);
                     self.expect_token(TokenKind::Semicolon)?;
                 }
                 TokenKind::Retention => {
@@ -381,24 +381,88 @@ impl Parser {
 
     /// Parse a duration
     fn parse_duration(&mut self) -> Result<Duration> {
-        let value = self.expect_numeric_literal()?;
-        let unit_str = self.expect_identifier()?;
-        let unit = DurationUnit::from_str(&unit_str)
-            .ok_or_else(|| ParserError::InvalidDurationUnit {
-                unit: unit_str,
-                span: self.previous().unwrap().span,
-            })?;
+        if self.check(TokenKind::DurationLiteral) {
+            let token = self.advance();
+            let text = token.text.clone();
+            
+            // Parse duration literal like "5s", "10s", "7d"
+            let (value_str, unit_str) = if let Some(last_char) = text.chars().last() {
+                if last_char.is_alphabetic() {
+                    let value_str = &text[..text.len() - 1];
+                    let unit_str = &text[text.len() - 1..];
+                    (value_str, unit_str)
+                } else {
+                    return Err(ParserError::InvalidDurationLiteral {
+                        text: text.to_string(),
+                        span: token.span,
+                    });
+                }
+            } else {
+                return Err(ParserError::InvalidDurationLiteral {
+                    text: text.to_string(),
+                    span: token.span,
+                });
+            };
+            
+            let value = value_str.parse::<u64>()
+                .map_err(|_| ParserError::InvalidDurationLiteral {
+                    text: text.to_string(),
+                    span: token.span,
+                })?;
+            
+            let unit = DurationUnit::from_str(unit_str)
+                .ok_or_else(|| ParserError::InvalidDurationUnit {
+                    unit: unit_str.to_string(),
+                    span: token.span,
+                })?;
 
-        Ok(Duration::new(value, unit))
+            Ok(Duration::new(value, unit))
+        } else {
+            // Fallback to old format: numeric literal + identifier
+            let value = self.expect_numeric_literal()?;
+            let unit_str = self.expect_identifier()?;
+            let unit = DurationUnit::from_str(&unit_str)
+                .ok_or_else(|| ParserError::InvalidDurationUnit {
+                    unit: unit_str,
+                    span: self.previous().unwrap().span,
+                })?;
+
+            Ok(Duration::new(value, unit))
+        }
     }
 
     /// Parse a retry policy
     fn parse_retry_policy(&mut self) -> Result<RetryPolicy> {
-        let policy_type_str = self.expect_identifier()?;
+        let (policy_type_str, span) = match self.peek()?.kind {
+            TokenKind::ExponentialBackoff => {
+                self.advance();
+                ("exponential_backoff".to_string(), self.previous()?.span)
+            }
+            TokenKind::LinearBackoff => {
+                self.advance();
+                ("linear_backoff".to_string(), self.previous()?.span)
+            }
+            TokenKind::FixedDelay => {
+                self.advance();
+                ("fixed_delay".to_string(), self.previous()?.span)
+            }
+            TokenKind::Identifier => {
+                let token = self.advance();
+                (token.text.to_string(), token.span)
+            }
+            _ => {
+                return Err(ParserError::UnexpectedToken {
+                    expected: "exponential_backoff, linear_backoff, fixed_delay, or identifier".to_string(),
+                    found: self.peek()?.kind,
+                    span: self.peek()?.span,
+                });
+            }
+        };
+        
         let policy_type = RetryPolicyType::from_str(&policy_type_str)
             .ok_or_else(|| ParserError::InvalidRetryPolicyType {
                 policy_type: policy_type_str,
-                span: self.previous().unwrap().span,
+                span,
             })?;
 
         self.expect_token(TokenKind::LeftParen)?;
@@ -451,21 +515,71 @@ impl Parser {
 
     /// Parse a compression type
     fn parse_compression_type(&mut self) -> Result<CompressionType> {
-        let type_str = self.expect_identifier()?;
+        let (type_str, span) = match self.peek()?.kind {
+            TokenKind::Lz4 => {
+                self.advance();
+                ("lz4".to_string(), self.previous()?.span)
+            }
+            TokenKind::Gzip => {
+                self.advance();
+                ("gzip".to_string(), self.previous()?.span)
+            }
+            TokenKind::Zstd => {
+                self.advance();
+                ("zstd".to_string(), self.previous()?.span)
+            }
+            TokenKind::Identifier => {
+                let token = self.advance();
+                (token.text.to_string(), token.span)
+            }
+            _ => {
+                return Err(ParserError::UnexpectedToken {
+                    expected: "lz4, gzip, zstd, or identifier".to_string(),
+                    found: self.peek()?.kind,
+                    span: self.peek()?.span,
+                });
+            }
+        };
+        
         CompressionType::from_str(&type_str)
             .ok_or_else(|| ParserError::InvalidCompressionType {
                 compression_type: type_str,
-                span: self.previous().unwrap().span,
+                span,
             })
     }
 
     /// Parse a serialization type
     fn parse_serialization_type(&mut self) -> Result<SerializationType> {
-        let type_str = self.expect_identifier()?;
+        let (type_str, span) = match self.peek()?.kind {
+            TokenKind::Qiss => {
+                self.advance();
+                ("qiss".to_string(), self.previous()?.span)
+            }
+            TokenKind::Protobuf => {
+                self.advance();
+                ("protobuf".to_string(), self.previous()?.span)
+            }
+            TokenKind::Json => {
+                self.advance();
+                ("json".to_string(), self.previous()?.span)
+            }
+            TokenKind::Identifier => {
+                let token = self.advance();
+                (token.text.to_string(), token.span)
+            }
+            _ => {
+                return Err(ParserError::UnexpectedToken {
+                    expected: "qiss, protobuf, json, or identifier".to_string(),
+                    found: self.peek()?.kind,
+                    span: self.peek()?.span,
+                });
+            }
+        };
+        
         SerializationType::from_str(&type_str)
             .ok_or_else(|| ParserError::InvalidSerializationType {
                 serialization_type: type_str,
-                span: self.previous().unwrap().span,
+                span,
             })
     }
 
@@ -541,6 +655,22 @@ impl Parser {
                 span: self.peek()?.span,
             })
         }
+    }
+
+    /// Parse a field access expression (e.g., "user.id" or just "user")
+    fn parse_field_access(&mut self) -> Result<String> {
+        let mut parts = Vec::new();
+        
+        // First part must be an identifier
+        parts.push(self.expect_identifier()?);
+        
+        // Parse additional parts separated by dots
+        while self.check(TokenKind::Dot) {
+            self.advance(); // consume the dot
+            parts.push(self.expect_identifier()?);
+        }
+        
+        Ok(parts.join("."))
     }
 
     /// Expect a string literal token
