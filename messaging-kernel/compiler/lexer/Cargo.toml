@@ -1,0 +1,13 @@
+[package]
+name = "neo-lexer"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Lexer for Neo protocol files"
+
+[dependencies]
+thiserror = { workspace = true }
+logos = "0.14"
+logos-derive = "0.14"

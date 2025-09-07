@@ -1,0 +1,20 @@
+[package]
+name = "neo-benchmarks"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Benchmarks for Neo messaging kernel"
+
+[dependencies]
+qiss-format = { path = "../../core/qiss-format" }
+neo-protocol = { path = "../../core/neo-protocol" }
+precursor-broker = { path = "../../core/precursor-broker" }
+tokio = { workspace = true }
+serde = { workspace = true }
+bytes = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+criterion = "0.5"

@@ -8,17 +8,15 @@ repository.workspace = true
 description = "Binary serialization format optimized for speed"
 
 [dependencies]
-tokio.workspace = true
-serde.workspace = true
-bytes.workspace = true
-thiserror.workspace = true
-anyhow.workspace = true
-tracing.workspace = true
+tokio = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+bytes = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+bytemuck = { version = "1.0", features = ["derive"] }
+zerocopy = { version = "0.7", features = ["derive"] }
+crc32fast = "1.0"
 
 [dev-dependencies]
 tokio-test = "0.4"
-criterion = "0.5"
-
-[[bench]]
-name = "benchmarks"
-harness = false
