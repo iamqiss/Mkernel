@@ -1,0 +1,13 @@
+[package]
+name = "neo-parser"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Parser for Neo protocol files"
+
+[dependencies]
+neo-lexer = { path = "../lexer" }
+thiserror = { workspace = true }
+anyhow = { workspace = true }

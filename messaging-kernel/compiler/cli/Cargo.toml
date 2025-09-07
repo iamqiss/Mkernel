@@ -1,0 +1,21 @@
+[package]
+name = "neo-compiler-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "CLI for Neo protocol compiler"
+
+[[bin]]
+name = "neo-compiler"
+path = "src/main.rs"
+
+[dependencies]
+neo-codegen = { path = "../codegen" }
+neo-parser = { path = "../parser" }
+neo-lexer = { path = "../lexer" }
+clap = { version = "4.0", features = ["derive"] }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = "0.3"

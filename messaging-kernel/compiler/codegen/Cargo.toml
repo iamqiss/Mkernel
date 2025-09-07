@@ -1,0 +1,17 @@
+[package]
+name = "neo-codegen"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Code generator for Neo protocol services"
+
+[dependencies]
+neo-parser = { path = "../parser" }
+qiss-format = { path = "../../core/qiss-format" }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+quote = "1.0"
+proc-macro2 = "1.0"
+syn = { version = "2.0", features = ["full"] }

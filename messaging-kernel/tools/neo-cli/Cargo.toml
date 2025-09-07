@@ -1,0 +1,22 @@
+[package]
+name = "neo-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Neo CLI tool for building and running services"
+
+[[bin]]
+name = "neo"
+path = "src/main.rs"
+
+[dependencies]
+neo-compiler-cli = { path = "../../compiler/cli" }
+neo-runtime-rust = { path = "../../runtime/rust" }
+neoship-manifest = { path = "../../core/neoship-manifest" }
+clap = { version = "4.0", features = ["derive"] }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = "0.3"
+tokio = { workspace = true }
