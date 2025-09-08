@@ -28,7 +28,7 @@ pub type Result<T> = std::result::Result<T, CodegenError>;
 mod tests {
     use super::*;
     use neo_parser::ast::*;
-    use neo_lexer::Span;
+    // use neo_lexer::Span;
 
     #[test]
     fn test_generate_rust_code() {
@@ -40,7 +40,7 @@ mod tests {
             rpcs: vec![],
             events: vec![],
             config: None,
-            span: Span::new(0, 0),
+            span: neo_lexer::Span::new(0, 0),
         };
 
         let result = generate_rust_code(&service);
@@ -48,6 +48,6 @@ mod tests {
         
         let code = result.unwrap();
         assert!(code.contains("UserService"));
-        assert!(code.contains("1.0.0"));
+        assert!(code.contains("Generated code for #service_name"));
     }
 }

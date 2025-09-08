@@ -9,6 +9,7 @@ description = "Code generator for Neo protocol services"
 
 [dependencies]
 neo-parser = { path = "../parser" }
+neo-lexer = { path = "../lexer" }
 qiss-format = { path = "../../core/qiss-format" }
 thiserror = { workspace = true }
 anyhow = { workspace = true }
