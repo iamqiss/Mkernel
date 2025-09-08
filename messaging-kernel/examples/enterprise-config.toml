@@ -1,0 +1,1130 @@
+# Neo Messaging Kernel - Enterprise Configuration
+# Phase 3 Enterprise Features Configuration
+
+[neo_protocol]
+max_message_size = 10485760  # 10MB
+rpc_timeout = "30s"
+connect_timeout = "10s"
+heartbeat_interval = "30s"
+max_concurrent_requests = 10000
+enable_compression = true
+
+# Advanced Security Configuration
+[security]
+enable_auth = true
+enable_authorization = true
+enable_encryption = true
+auth_method = "OAuth2"
+token_expiration = "8h"
+
+# Rate Limiting
+[security.rate_limiting]
+enabled = true
+requests_per_second = 10000
+burst_limit = 1000
+window_size = "1s"
+
+# Encryption Configuration
+[security.encryption]
+enabled = true
+algorithm = "Aes256Gcm"
+key_size = 256
+key_rotation_interval = "24h"
+
+# mTLS Configuration
+[security.mtls]
+enabled = true
+ca_cert_path = "/etc/neo/certs/ca.crt"
+server_cert_path = "/etc/neo/certs/server.crt"
+server_key_path = "/etc/neo/certs/server.key"
+client_cert_path = "/etc/neo/certs/client.crt"
+client_key_path = "/etc/neo/certs/client.key"
+require_client_cert = true
+verify_client_cert = true
+cert_validation_depth = 5
+
+# OAuth2/OIDC Configuration
+[security.oauth2]
+enabled = true
+auth_server_url = "https://oauth.company.com"
+client_id = "neo-messaging"
+client_secret = "your-client-secret"
+redirect_uri = "https://neo.company.com/oauth/callback"
+scopes = ["openid", "profile", "email", "groups"]
+token_endpoint = "https://oauth.company.com/oauth/token"
+user_info_endpoint = "https://oauth.company.com/oauth/userinfo"
+jwks_endpoint = "https://oauth.company.com/.well-known/jwks.json"
+token_validation_interval = "5m"
+
+# Advanced RBAC Configuration
+[security.rbac]
+enabled = true
+enable_inheritance = true
+enable_context_aware = true
+enable_dynamic_roles = true
+default_permissions = ["read"]
+
+# Role Hierarchy
+[security.rbac.role_hierarchy]
+admin = ["manager", "user"]
+manager = ["user"]
+user = []
+
+# Resource Permissions
+[security.rbac.resource_permissions]
+admin = ["*:*"]
+manager = ["user:*", "data:read", "data:write"]
+user = ["data:read"]
+
+# Audit Logging Configuration
+[security.audit]
+enabled = true
+log_level = "Info"
+log_auth_events = true
+log_authz_events = true
+log_data_access = true
+log_admin_events = true
+retention_period = "365d"
+storage_backend = "Database"
+encrypt_logs = true
+enable_alerting = true
+
+# Compliance Configuration
+[security.compliance]
+enabled = true
+frameworks = ["SOC2", "GDPR", "HIPAA"]
+
+# Data Classification
+[security.compliance.data_classification]
+levels = ["Public", "Internal", "Confidential", "Restricted"]
+
+# Retention Policies
+[security.compliance.retention_policies]
+user_data = { retention_period = "7y", auto_deletion = true, legal_hold = true, archive_before_deletion = true }
+audit_logs = { retention_period = "7y", auto_deletion = true, legal_hold = true, archive_before_deletion = true }
+system_logs = { retention_period = "1y", auto_deletion = true, legal_hold = false, archive_before_deletion = false }
+
+# Data Residency
+[security.compliance.data_residency]
+[[security.compliance.data_residency]]
+data_type = "personal_data"
+regions = ["us-east-1", "eu-west-1"]
+prohibited_regions = ["ap-southeast-1"]
+
+# Privacy Controls
+[security.compliance.privacy_controls]
+enable_anonymization = true
+enable_pseudonymization = true
+enable_consent_management = true
+enable_right_to_be_forgotten = true
+enable_data_portability = true
+
+# Threat Detection Configuration
+[security.threat_detection]
+enabled = true
+real_time_monitoring = true
+threat_intelligence = ["https://threat-intel.company.com/feed"]
+
+# Anomaly Detection
+[security.threat_detection.anomaly_detection]
+enabled = true
+algorithms = ["Statistical", "MachineLearning"]
+sensitivity_threshold = 0.8
+learning_period = "7d"
+auto_adjustment = true
+
+# Intrusion Detection
+[security.threat_detection.intrusion_detection]
+enabled = true
+response_actions = ["Log", "Alert", "Block"]
+false_positive_threshold = 0.1
+
+# Behavioral Analysis
+[security.threat_detection.behavioral_analysis]
+enabled = true
+models = ["UserBehavior", "NetworkBehavior", "ApplicationBehavior"]
+baseline_period = "30d"
+deviation_threshold = 0.7
+
+# Data Governance Configuration
+[security.data_governance]
+enabled = true
+
+# Data Lineage
+[security.data_governance.data_lineage]
+enabled = true
+lineage_depth = 5
+real_time_tracking = true
+storage_backend = "Graph"
+
+# Data Quality
+[security.data_governance.data_quality]
+enabled = true
+monitoring_frequency = "1h"
+alerting_threshold = 0.8
+
+# Data Catalog
+[security.data_governance.data_catalog]
+enabled = true
+auto_discovery = true
+metadata_standards = ["DublinCore", "ISO19115"]
+full_text_search = true
+faceted_search = true
+semantic_search = false
+auto_complete = true
+
+# Data Stewardship
+[security.data_governance.data_stewardship]
+enabled = true
+steward_assignment = "Automatic"
+approval_workflows = true
+data_ownership = true
+
+# Multi-Cluster Configuration
+[multi_cluster]
+enabled = true
+
+# Local Cluster
+[multi_cluster.local_cluster]
+cluster_id = "us-east-1"
+cluster_name = "US East Cluster"
+region = "us-east-1"
+zone = "us-east-1a"
+endpoints = ["https://neo-us-east.company.com:8080"]
+
+# Cluster Credentials
+[multi_cluster.local_cluster.credentials]
+auth_method = "Certificate"
+cert_path = "/etc/neo/certs/cluster.crt"
+key_path = "/etc/neo/certs/cluster.key"
+ca_cert_path = "/etc/neo/certs/ca.crt"
+
+# Cluster Capabilities
+[multi_cluster.local_cluster.capabilities]
+supported_protocols = ["neo-protocol", "grpc", "http"]
+max_message_size = 10485760
+max_connections = 50000
+compression_algorithms = ["gzip", "lz4", "zstd"]
+encryption_algorithms = ["aes-256-gcm", "chacha20-poly1305"]
+supports_replication = true
+supports_load_balancing = true
+supports_service_mesh = true
+
+# Remote Clusters
+[[multi_cluster.remote_clusters]]
+cluster_id = "eu-west-1"
+cluster_name = "EU West Cluster"
+region = "eu-west-1"
+zone = "eu-west-1a"
+endpoints = ["https://neo-eu-west.company.com:8080"]
+
+[multi_cluster.remote_clusters.credentials]
+auth_method = "Certificate"
+cert_path = "/etc/neo/certs/cluster-eu.crt"
+key_path = "/etc/neo/certs/cluster-eu.key"
+ca_cert_path = "/etc/neo/certs/ca.crt"
+
+[[multi_cluster.remote_clusters]]
+cluster_id = "ap-southeast-1"
+cluster_name = "AP Southeast Cluster"
+region = "ap-southeast-1"
+zone = "ap-southeast-1a"
+endpoints = ["https://neo-ap-southeast.company.com:8080"]
+
+[multi_cluster.remote_clusters.credentials]
+auth_method = "Certificate"
+cert_path = "/etc/neo/certs/cluster-ap.crt"
+key_path = "/etc/neo/certs/cluster-ap.key"
+ca_cert_path = "/etc/neo/certs/ca.crt"
+
+# Cross-Cluster Replication
+[multi_cluster.replication]
+enabled = true
+mode = "Async"
+replication_factor = 3
+sync_replication = false
+replication_timeout = "30s"
+conflict_resolution = "LastWriteWins"
+
+# Replication Filters
+[[multi_cluster.replication.filters]]
+filter_type = "ServiceName"
+pattern = "user-service"
+action = "Include"
+
+[[multi_cluster.replication.filters]]
+filter_type = "DataType"
+pattern = "sensitive"
+action = "Exclude"
+
+# Service Mesh Configuration
+[multi_cluster.service_mesh]
+enabled = true
+mesh_type = "Istio"
+
+# Traffic Management
+[multi_cluster.service_mesh.traffic_management]
+load_balancing_algorithm = "RoundRobin"
+
+# Circuit Breaker
+[multi_cluster.service_mesh.traffic_management.circuit_breaker]
+enabled = true
+failure_threshold = 5
+recovery_timeout = "60s"
+half_open_max_calls = 3
+
+# Retry Configuration
+[multi_cluster.service_mesh.traffic_management.retry_config]
+enabled = true
+max_attempts = 3
+retry_delay = "100ms"
+backoff_multiplier = 2.0
+max_retry_delay = "30s"
+
+# Timeout Configuration
+[multi_cluster.service_mesh.traffic_management.timeout_config]
+connection_timeout = "10s"
+request_timeout = "30s"
+idle_timeout = "5m"
+
+# Rate Limiting
+[multi_cluster.service_mesh.traffic_management.rate_limiting]
+enabled = true
+requests_per_second = 1000
+burst_size = 100
+
+# Security Policies
+[multi_cluster.service_mesh.security_policies]
+enable_mtls = true
+
+# Authorization Policies
+[[multi_cluster.service_mesh.security_policies.authorization_policies]]
+name = "default-policy"
+rules = [
+    { source = "frontend", destination = "backend", action = "Allow" },
+    { source = "backend", destination = "database", action = "Allow" }
+]
+
+# Network Policies
+[[multi_cluster.service_mesh.security_policies.network_policies]]
+name = "default-network-policy"
+ingress_rules = [
+    { source = "0.0.0.0/0", ports = [8080, 8443] }
+]
+egress_rules = [
+    { destination = "0.0.0.0/0", ports = [80, 443, 53] }
+]
+
+# Observability
+[multi_cluster.service_mesh.observability]
+enable_metrics = true
+enable_tracing = true
+enable_logging = true
+metrics_endpoint = "http://prometheus:9090"
+tracing_endpoint = "http://jaeger:14268"
+
+# Load Balancing Configuration
+[multi_cluster.load_balancing]
+enabled = true
+algorithm = "RoundRobin"
+sticky_sessions = false
+session_timeout = "5m"
+
+# Health Check
+[multi_cluster.load_balancing.health_check]
+enabled = true
+interval = "30s"
+timeout = "5s"
+unhealthy_threshold = 3
+healthy_threshold = 2
+
+# Disaster Recovery Configuration
+[multi_cluster.disaster_recovery]
+enabled = true
+rto = "5m"
+rpo = "1m"
+
+# Backup Configuration
+[multi_cluster.disaster_recovery.backup]
+enabled = true
+interval = "1h"
+retention = "7d"
+storage = "Cloud"
+
+# Failover Configuration
+[multi_cluster.disaster_recovery.failover]
+enabled = true
+detection_interval = "10s"
+failover_timeout = "60s"
+failback_enabled = true
+
+# Network Segmentation Configuration
+[multi_cluster.network_segmentation]
+enabled = true
+
+# Network Segments
+[[multi_cluster.network_segmentation.segments]]
+segment_id = "dmz"
+segment_name = "DMZ"
+cidr_block = "10.0.1.0/24"
+security_level = "Dmz"
+
+[[multi_cluster.network_segmentation.segments]]
+segment_id = "internal"
+segment_name = "Internal"
+cidr_block = "10.0.2.0/24"
+security_level = "Internal"
+
+[[multi_cluster.network_segmentation.segments]]
+segment_id = "restricted"
+segment_name = "Restricted"
+cidr_block = "10.0.3.0/24"
+security_level = "Restricted"
+
+# Inter-Segment Policies
+[[multi_cluster.network_segmentation.inter_segment_policies]]
+source_segment = "dmz"
+destination_segment = "internal"
+allowed_protocols = ["http", "https"]
+allowed_ports = [80, 443]
+action = "Allow"
+
+[[multi_cluster.network_segmentation.inter_segment_policies]]
+source_segment = "internal"
+destination_segment = "restricted"
+allowed_protocols = ["neo-protocol"]
+allowed_ports = [8080]
+action = "Allow"
+
+# Enterprise Integrations Configuration
+[enterprise]
+enabled = true
+
+# LDAP/Active Directory Configuration
+[enterprise.ldap]
+enabled = true
+server_url = "ldap://ldap.company.com:389"
+base_dn = "dc=company,dc=com"
+bind_dn = "cn=neo,ou=services,dc=company,dc=com"
+bind_password = "ldap-password"
+user_search_filter = "(objectClass=person)"
+group_search_filter = "(objectClass=group)"
+connection_timeout = "10s"
+read_timeout = "30s"
+
+# LDAP Attribute Mappings
+[enterprise.ldap.attribute_mappings]
+username_attribute = "sAMAccountName"
+email_attribute = "mail"
+first_name_attribute = "givenName"
+last_name_attribute = "sn"
+display_name_attribute = "displayName"
+group_membership_attribute = "memberOf"
+
+# LDAP SSL Configuration
+[enterprise.ldap.ssl_config]
+enabled = true
+ssl_mode = "StartTls"
+certificate_validation = true
+ca_cert_path = "/etc/neo/certs/ldap-ca.crt"
+
+# LDAP Connection Pooling
+[enterprise.ldap.connection_pooling]
+enabled = true
+min_connections = 2
+max_connections = 10
+connection_timeout = "10s"
+idle_timeout = "5m"
+
+# SAML Configuration
+[enterprise.saml]
+enabled = true
+idp_url = "https://saml.company.com"
+sp_entity_id = "neo-messaging"
+acs_url = "https://neo.company.com/saml/acs"
+sls_url = "https://neo.company.com/saml/sls"
+certificate = "/etc/neo/certs/saml.crt"
+private_key = "/etc/neo/certs/saml.key"
+name_id_format = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+signature_algorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
+digest_algorithm = "http://www.w3.org/2001/04/xmlenc#sha256"
+
+# SAML Attributes
+[enterprise.saml.attributes]
+username_attribute = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+email_attribute = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+first_name_attribute = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"
+last_name_attribute = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"
+groups_attribute = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/group"
+
+# Enterprise SSO Configuration
+[enterprise.enterprise_sso]
+enabled = true
+
+# SSO Providers
+[[enterprise.enterprise_sso.providers]]
+provider_id = "okta"
+provider_name = "Okta"
+provider_type = "OpenIdConnect"
+enabled = true
+
+[enterprise.enterprise_sso.providers.config]
+client_id = "neo-messaging"
+client_secret = "okta-client-secret"
+issuer_url = "https://company.okta.com"
+scopes = ["openid", "profile", "email", "groups"]
+
+[[enterprise.enterprise_sso.providers]]
+provider_id = "azure-ad"
+provider_name = "Azure Active Directory"
+provider_type = "OpenIdConnect"
+enabled = true
+
+[enterprise.enterprise_sso.providers.config]
+client_id = "neo-messaging"
+client_secret = "azure-client-secret"
+issuer_url = "https://login.microsoftonline.com/tenant-id/v2.0"
+scopes = ["openid", "profile", "email"]
+
+# Session Management
+[enterprise.enterprise_sso.session_management]
+session_timeout = "8h"
+idle_timeout = "2h"
+max_concurrent_sessions = 5
+session_storage = "Redis"
+
+# Session Security
+[enterprise.enterprise_sso.session_management.session_security]
+enable_encryption = true
+enable_signing = true
+
+# Cookie Security
+[enterprise.enterprise_sso.session_management.session_security.cookie_security]
+secure = true
+http_only = true
+same_site = "Strict"
+
+# Token Management
+[enterprise.enterprise_sso.token_management]
+access_token_lifetime = "1h"
+refresh_token_lifetime = "24h"
+signing_algorithm = "RS256"
+
+# Token Encryption
+[enterprise.enterprise_sso.token_management.token_encryption]
+enabled = true
+algorithm = "A256GCM"
+
+# Key Management
+[enterprise.enterprise_sso.token_management.token_encryption.key_management]
+key_rotation_interval = "24h"
+key_storage = "Hsm"
+
+# Key Derivation
+[enterprise.enterprise_sso.token_management.token_encryption.key_management.key_derivation]
+algorithm = "PBKDF2"
+salt_length = 32
+iterations = 100000
+
+# Federation Configuration
+[enterprise.enterprise_sso.federation]
+enabled = true
+
+# Federation Partners
+[[enterprise.enterprise_sso.federation.partners]]
+partner_id = "partner-1"
+partner_name = "Partner Company"
+metadata_url = "https://partner.com/saml/metadata"
+trust_level = "High"
+
+# Trust Relationships
+[[enterprise.enterprise_sso.federation.trust_relationships]]
+source_partner = "company"
+target_partner = "partner-1"
+trust_type = "Bidirectional"
+
+# Compliance Integrations Configuration
+[enterprise.compliance_integrations]
+enabled = true
+
+# Compliance Frameworks
+[[enterprise.compliance_integrations.frameworks]]
+name = "SOC 2 Type II"
+version = "2017"
+framework_type = "SOC2"
+
+[[enterprise.compliance_integrations.frameworks]]
+name = "GDPR"
+version = "2018"
+framework_type = "GDPR"
+
+[[enterprise.compliance_integrations.frameworks]]
+name = "HIPAA"
+version = "2020"
+framework_type = "HIPAA"
+
+# SIEM Integration
+[enterprise.compliance_integrations.siem]
+enabled = true
+siem_type = "Splunk"
+endpoint = "https://splunk.company.com:8089"
+
+# SIEM Authentication
+[enterprise.compliance_integrations.siem.authentication]
+method = "ApiKey"
+api_key = "splunk-api-key"
+
+# Event Formats
+[enterprise.compliance_integrations.siem.event_formats]
+formats = ["CEF", "JSON"]
+
+# GRC Integration
+[enterprise.compliance_integrations.grc]
+enabled = true
+grc_system = "Archer"
+
+# Audit Integration
+[enterprise.compliance_integrations.audit]
+enabled = true
+
+# Audit Systems
+[[enterprise.compliance_integrations.audit.audit_systems]]
+name = "audit-db"
+system_type = "Database"
+
+[[enterprise.compliance_integrations.audit.audit_systems]]
+name = "audit-siem"
+system_type = "Siem"
+
+# Audit Formats
+[enterprise.compliance_integrations.audit.audit_formats]
+formats = ["JSON", "XML"]
+
+# Identity Providers
+[[enterprise.identity_providers]]
+provider_id = "google"
+provider_name = "Google"
+provider_type = "OpenIdConnect"
+enabled = true
+
+[enterprise.identity_providers.config]
+client_id = "google-client-id"
+client_secret = "google-client-secret"
+issuer_url = "https://accounts.google.com"
+scopes = ["openid", "profile", "email"]
+
+[[enterprise.identity_providers]]
+provider_id = "github"
+provider_name = "GitHub"
+provider_type = "OAuth2"
+enabled = true
+
+[enterprise.identity_providers.config]
+client_id = "github-client-id"
+client_secret = "github-client-secret"
+authorization_url = "https://github.com/login/oauth/authorize"
+token_url = "https://github.com/login/oauth/access_token"
+scopes = ["user:email", "read:user"]
+
+# Directory Services Configuration
+[enterprise.directory_services]
+enabled = true
+
+# Directory Services
+[[enterprise.directory_services.services]]
+service_id = "ldap-primary"
+service_name = "Primary LDAP"
+service_type = "Ldap"
+
+[enterprise.directory_services.services.config]
+server_url = "ldap://ldap1.company.com:389"
+base_dn = "dc=company,dc=com"
+bind_dn = "cn=neo,ou=services,dc=company,dc=com"
+bind_password = "ldap-password"
+
+[[enterprise.directory_services.services]]
+service_id = "ad-primary"
+service_name = "Primary Active Directory"
+service_type = "ActiveDirectory"
+
+[enterprise.directory_services.services.config]
+server_url = "ldap://ad.company.com:389"
+base_dn = "dc=company,dc=com"
+bind_dn = "CN=neo,CN=Users,DC=company,DC=com"
+bind_password = "ad-password"
+
+# Synchronization
+[enterprise.directory_services.synchronization]
+enabled = true
+sync_interval = "1h"
+sync_direction = "Bidirectional"
+conflict_resolution = "LastWriteWins"
+
+# Enterprise Messaging Configuration
+[enterprise.enterprise_messaging]
+enabled = true
+
+# Message Brokers
+[[enterprise.enterprise_messaging.message_brokers]]
+broker_id = "kafka-primary"
+broker_name = "Primary Kafka"
+broker_type = "Kafka"
+
+[enterprise.enterprise_messaging.message_brokers.config]
+bootstrap_servers = "kafka1.company.com:9092,kafka2.company.com:9092"
+security_protocol = "SASL_SSL"
+sasl_mechanism = "PLAIN"
+sasl_username = "kafka-user"
+sasl_password = "kafka-password"
+
+[[enterprise.enterprise_messaging.message_brokers]]
+broker_id = "rabbitmq-primary"
+broker_name = "Primary RabbitMQ"
+broker_type = "RabbitMQ"
+
+[enterprise.enterprise_messaging.message_brokers.config]
+host = "rabbitmq.company.com"
+port = 5672
+username = "rabbitmq-user"
+password = "rabbitmq-password"
+virtual_host = "/"
+
+# Message Formats
+[enterprise.enterprise_messaging.message_formats]
+formats = ["JSON", "Avro", "Protobuf"]
+
+# Routing Configuration
+[enterprise.enterprise_messaging.routing]
+enabled = true
+
+# Routing Rules
+[[enterprise.enterprise_messaging.routing.routing_rules]]
+rule_id = "user-events"
+rule_name = "User Events"
+pattern = "user.*"
+target_broker = "kafka-primary"
+priority = 1
+
+[[enterprise.enterprise_messaging.routing.routing_rules]]
+rule_id = "system-events"
+rule_name = "System Events"
+pattern = "system.*"
+target_broker = "rabbitmq-primary"
+priority = 2
+
+# Legacy Integrations Configuration
+[enterprise.legacy_integrations]
+enabled = true
+
+# Legacy Systems
+[[enterprise.legacy_integrations.legacy_systems]]
+system_id = "mainframe-1"
+system_name = "Mainframe System 1"
+system_type = "Mainframe"
+
+[enterprise.legacy_integrations.legacy_systems.config]
+host = "mainframe1.company.com"
+port = 23
+username = "mainframe-user"
+password = "mainframe-password"
+protocol = "TN3270"
+
+[[enterprise.legacy_integrations.legacy_systems]]
+system_id = "as400-1"
+system_name = "AS/400 System 1"
+system_type = "As400"
+
+[enterprise.legacy_integrations.legacy_systems.config]
+host = "as4001.company.com"
+port = 23
+username = "as400-user"
+password = "as400-password"
+protocol = "TN5250"
+
+# Adapters
+[[enterprise.legacy_integrations.adapters]]
+adapter_id = "mainframe-adapter"
+adapter_name = "Mainframe Adapter"
+adapter_type = "Protocol"
+
+[enterprise.legacy_integrations.adapters.config]
+source_system = "mainframe-1"
+target_protocol = "neo-protocol"
+transformation_rules = "/etc/neo/adapters/mainframe-rules.json"
+
+[[enterprise.legacy_integrations.adapters]]
+adapter_id = "as400-adapter"
+adapter_name = "AS/400 Adapter"
+adapter_type = "Data"
+
+[enterprise.legacy_integrations.adapters.config]
+source_system = "as400-1"
+target_format = "JSON"
+transformation_rules = "/etc/neo/adapters/as400-rules.json"
+
+# SLA and Compliance Configuration
+[sla_compliance]
+enabled = true
+
+# SLA Configuration
+[sla_compliance.sla]
+enabled = true
+
+# SLA Definitions
+[[sla_compliance.sla.sla_definitions]]
+sla_id = "user-service-sla"
+sla_name = "User Service SLA"
+service_name = "user-service"
+
+# SLA Metrics
+[[sla_compliance.sla.sla_definitions.metrics]]
+metric_name = "response_time"
+metric_type = "ResponseTime"
+unit = "ms"
+aggregation = "Percentile(95)"
+
+[[sla_compliance.sla.sla_definitions.metrics]]
+metric_name = "availability"
+metric_type = "Availability"
+unit = "%"
+aggregation = "Average"
+
+# SLA Thresholds
+[sla_compliance.sla.sla_definitions.thresholds]
+response_time = { value = 500.0, operator = "LessThan", severity = "High", time_window = "5m" }
+availability = { value = 99.9, operator = "GreaterThanOrEqual", severity = "Critical", time_window = "1h" }
+
+# SLA Penalties
+[[sla_compliance.sla.sla_definitions.penalties]]
+penalty_type = "ServiceCredit"
+value = 0.1
+currency = "USD"
+
+# Performance Targets
+[sla_compliance.sla.performance_targets]
+cpu_usage_target = 80.0
+memory_usage_target = 85.0
+disk_io_target = 1000.0
+network_io_target = 100.0
+
+# Availability Targets
+[sla_compliance.sla.availability_targets]
+uptime_target = 99.9
+mttr_target = "5m"
+mtbf_target = "24h"
+recovery_time_target = "10m"
+
+# Response Time Targets
+[sla_compliance.sla.response_time_targets]
+p50_target = "100ms"
+p95_target = "500ms"
+p99_target = "1s"
+max_target = "5s"
+
+# Throughput Targets
+[sla_compliance.sla.throughput_targets]
+rps_target = 10000
+mps_target = 100000
+data_throughput_target = 104857600  # 100 MB/s
+
+# Compliance Configuration
+[sla_compliance.compliance]
+enabled = true
+
+# Compliance Frameworks
+[[sla_compliance.compliance.frameworks]]
+name = "SOC 2 Type II"
+version = "2017"
+framework_type = "SOC2"
+
+[[sla_compliance.compliance.frameworks]]
+name = "GDPR"
+version = "2018"
+framework_type = "GDPR"
+
+[[sla_compliance.compliance.frameworks]]
+name = "HIPAA"
+version = "2020"
+framework_type = "HIPAA"
+
+# Compliance Policies
+[[sla_compliance.compliance.policies]]
+policy_id = "data-encryption-policy"
+policy_name = "Data Encryption Policy"
+description = "All data must be encrypted at rest and in transit"
+
+# Policy Rules
+[[sla_compliance.compliance.policies.rules]]
+rule_id = "encryption-at-rest"
+rule_name = "Encryption at Rest"
+condition = "data.storage.encrypted == true"
+action = "Allow"
+
+[[sla_compliance.compliance.policies.rules]]
+rule_id = "encryption-in-transit"
+rule_name = "Encryption in Transit"
+condition = "data.transport.encrypted == true"
+action = "Allow"
+
+# Policy Enforcement
+[sla_compliance.compliance.policies.enforcement]
+mode = "Enforce"
+level = "Strict"
+
+# Compliance Controls
+[[sla_compliance.compliance.controls]]
+control_id = "access-control"
+control_name = "Access Control"
+description = "Implement proper access controls"
+control_type = "Preventive"
+
+# Control Implementation
+[sla_compliance.compliance.controls.implementation]
+status = "Implemented"
+details = "RBAC implemented with role hierarchy"
+evidence = ["rbac-config.json", "access-logs.json"]
+
+# Compliance Reporting
+[sla_compliance.compliance.reporting]
+enabled = true
+reporting_frequency = "24h"
+report_formats = ["PDF", "JSON"]
+report_recipients = ["compliance@company.com", "audit@company.com"]
+
+# Monitoring Configuration
+[sla_compliance.monitoring]
+enabled = true
+
+# Monitoring Intervals
+[sla_compliance.monitoring.intervals]
+system_metrics_interval = "1m"
+application_metrics_interval = "30s"
+sla_metrics_interval = "10s"
+compliance_metrics_interval = "5m"
+
+# Monitoring Metrics
+[[sla_compliance.monitoring.metrics]]
+metric_name = "cpu_usage"
+metric_type = "Gauge"
+source = "system"
+collection_method = "Pull"
+
+[[sla_compliance.monitoring.metrics]]
+metric_name = "memory_usage"
+metric_type = "Gauge"
+source = "system"
+collection_method = "Pull"
+
+[[sla_compliance.monitoring.metrics]]
+metric_name = "response_time"
+metric_type = "Histogram"
+source = "application"
+collection_method = "EventDriven"
+
+# Monitoring Thresholds
+[sla_compliance.monitoring.thresholds]
+cpu_usage = { value = 80.0, operator = "GreaterThan", alert_severity = "High", time_window = "5m" }
+memory_usage = { value = 85.0, operator = "GreaterThan", alert_severity = "High", time_window = "5m" }
+response_time = { value = 1000.0, operator = "GreaterThan", alert_severity = "Critical", time_window = "1m" }
+
+# Alerting Configuration
+[sla_compliance.alerting]
+enabled = true
+
+# Alert Channels
+[[sla_compliance.alerting.channels]]
+channel_id = "email-alerts"
+channel_name = "Email Alerts"
+channel_type = "Email"
+enabled = true
+
+[sla_compliance.alerting.channels.config]
+smtp_server = "smtp.company.com"
+smtp_port = 587
+username = "alerts@company.com"
+password = "email-password"
+from_address = "alerts@company.com"
+to_addresses = ["admin@company.com", "ops@company.com"]
+
+[[sla_compliance.alerting.channels]]
+channel_id = "slack-alerts"
+channel_name = "Slack Alerts"
+channel_type = "Slack"
+enabled = true
+
+[sla_compliance.alerting.channels.config]
+webhook_url = "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
+channel = "#alerts"
+username = "Neo Alerts"
+
+[[sla_compliance.alerting.channels]]
+channel_id = "pagerduty-alerts"
+channel_name = "PagerDuty Alerts"
+channel_type = "PagerDuty"
+enabled = true
+
+[sla_compliance.alerting.channels.config]
+integration_key = "pagerduty-integration-key"
+service_key = "pagerduty-service-key"
+
+# Alert Rules
+[[sla_compliance.alerting.rules]]
+rule_id = "high-cpu-alert"
+rule_name = "High CPU Usage Alert"
+condition = "cpu_usage > 80"
+severity = "High"
+channels = ["email-alerts", "slack-alerts"]
+enabled = true
+
+[[sla_compliance.alerting.rules]]
+rule_id = "sla-violation-alert"
+rule_name = "SLA Violation Alert"
+condition = "sla_compliance < 99.9"
+severity = "Critical"
+channels = ["email-alerts", "slack-alerts", "pagerduty-alerts"]
+enabled = true
+
+# Alert Escalation
+[sla_compliance.alerting.escalation]
+enabled = true
+
+# Escalation Levels
+[[sla_compliance.alerting.escalation.levels]]
+level = 1
+delay = "5m"
+channels = ["email-alerts"]
+
+[[sla_compliance.alerting.escalation.levels]]
+level = 2
+delay = "15m"
+channels = ["slack-alerts"]
+
+[[sla_compliance.alerting.escalation.levels]]
+level = 3
+delay = "30m"
+channels = ["pagerduty-alerts"]
+
+# Reporting Configuration
+[sla_compliance.reporting]
+enabled = true
+
+# Report Types
+[sla_compliance.reporting.report_types]
+types = ["SLA", "Compliance", "Performance", "Security"]
+
+# Report Scheduling
+[sla_compliance.reporting.scheduling]
+schedule_type = "Daily"
+interval = "24h"
+time = "00:00"
+
+# Report Storage
+[sla_compliance.reporting.storage]
+storage_type = "Cloud"
+location = "s3://neo-reports/"
+retention_period = "365d"
+
+# Data Governance Configuration
+[sla_compliance.data_governance]
+enabled = true
+
+# Data Classification
+[sla_compliance.data_governance.data_classification]
+levels = ["Public", "Internal", "Confidential", "Restricted"]
+
+# Classification Rules
+[[sla_compliance.data_governance.data_classification.rules]]
+rule_id = "pii-classification"
+rule_name = "PII Classification"
+pattern = ".*(ssn|credit_card|email|phone).*"
+classification_level = "Confidential"
+
+[[sla_compliance.data_governance.data_classification.rules]]
+rule_id = "public-data"
+rule_name = "Public Data"
+pattern = ".*(public|announcement|news).*"
+classification_level = "Public"
+
+# Data Retention
+[sla_compliance.data_governance.data_retention]
+auto_deletion = true
+legal_hold = true
+
+# Retention Policies
+[[sla_compliance.data_governance.data_retention.policies]]
+policy_id = "user-data-retention"
+policy_name = "User Data Retention"
+data_type = "user_data"
+retention_period = "7y"
+archive_before_deletion = true
+
+[[sla_compliance.data_governance.data_retention.policies]]
+policy_id = "audit-log-retention"
+policy_name = "Audit Log Retention"
+data_type = "audit_logs"
+retention_period = "7y"
+archive_before_deletion = true
+
+[[sla_compliance.data_governance.data_retention.policies]]
+policy_id = "system-log-retention"
+policy_name = "System Log Retention"
+data_type = "system_logs"
+retention_period = "1y"
+archive_before_deletion = false
+
+# Data Lineage
+[sla_compliance.data_governance.data_lineage]
+enabled = true
+lineage_depth = 5
+storage_backend = "Graph"
+
+# Data Privacy
+[sla_compliance.data_governance.data_privacy]
+
+# Privacy Controls
+[[sla_compliance.data_governance.data_privacy.privacy_controls]]
+control_id = "data-minimization"
+control_name = "Data Minimization"
+control_type = "DataMinimization"
+implementation = "Collect only necessary data"
+
+[[sla_compliance.data_governance.data_privacy.privacy_controls]]
+control_id = "purpose-limitation"
+control_name = "Purpose Limitation"
+control_type = "PurposeLimitation"
+implementation = "Use data only for stated purposes"
+
+# Consent Management
+[sla_compliance.data_governance.data_privacy.consent_management]
+enabled = true
+consent_storage = "Database"
+
+# Consent Types
+[[sla_compliance.data_governance.data_privacy.consent_management.consent_types]]
+consent_type = "DataProcessing"
+description = "Consent for data processing"
+
+[[sla_compliance.data_governance.data_privacy.consent_management.consent_types]]
+consent_type = "Marketing"
+description = "Consent for marketing communications"
+
+# Data Anonymization
+[sla_compliance.data_governance.data_privacy.data_anonymization]
+enabled = true
+
+# Anonymization Methods
+[sla_compliance.data_governance.data_privacy.data_anonymization.methods]
+methods = ["DataMasking", "DataTokenization", "DataPseudonymization"]
+
+# Anonymization Rules
+[[sla_compliance.data_governance.data_privacy.data_anonymization.rules]]
+rule_id = "email-anonymization"
+rule_name = "Email Anonymization"
+data_field = "email"
+method = "DataMasking"
+
+[[sla_compliance.data_governance.data_privacy.data_anonymization.rules]]
+rule_id = "ssn-anonymization"
+rule_name = "SSN Anonymization"
+data_field = "ssn"
+method = "DataTokenization"
