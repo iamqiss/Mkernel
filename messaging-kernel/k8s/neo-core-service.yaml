@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: neo-core-service
+  namespace: neo-messaging
+  labels:
+    app.kubernetes.io/name: neo-messaging-kernel
+    app.kubernetes.io/component: core
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9090"
+    prometheus.io/path: "/metrics"
+spec:
+  type: ClusterIP
+  ports:
+  - name: neo-protocol
+    port: 8080
+    targetPort: neo-protocol
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: metrics
+    protocol: TCP
+  - name: health
+    port: 9091
+    targetPort: health
+    protocol: TCP
+  selector:
+    app.kubernetes.io/name: neo-messaging-kernel
+    app.kubernetes.io/component: core
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: neo-core-headless
+  namespace: neo-messaging
+  labels:
+    app.kubernetes.io/name: neo-messaging-kernel
+    app.kubernetes.io/component: core
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: neo-protocol
+    port: 8080
+    targetPort: neo-protocol
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: metrics
+    protocol: TCP
+  - name: health
+    port: 9091
+    targetPort: health
+    protocol: TCP
+  selector:
+    app.kubernetes.io/name: neo-messaging-kernel
+    app.kubernetes.io/component: core

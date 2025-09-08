@@ -1,0 +1,26 @@
+[package]
+name = "neo-protocol-python"
+version = "0.1.0"
+edition = "2021"
+authors = ["Neo Qiss"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/neo-qiss/messaging-kernel"
+description = "Python bindings for Neo Messaging Kernel"
+
+[lib]
+name = "neo_protocol"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.20", features = ["extension-module"] }
+neo-protocol = { path = "../../core/neo-protocol" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+bytes = "1.0"
+anyhow = "1.0"
+thiserror = "1.0"
+tracing = "0.1"
+
+[build-dependencies]
+pyo3-build-config = "0.20"

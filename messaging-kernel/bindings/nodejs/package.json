@@ -1,0 +1,83 @@
+{
+  "name": "neo-protocol",
+  "version": "0.1.0",
+  "description": "High-performance Node.js bindings for Neo Messaging Kernel",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "napi build --release",
+    "build:debug": "napi build",
+    "test": "jest",
+    "test:benchmark": "node benchmarks/benchmark.js",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src/**/*.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "rpc",
+    "messaging",
+    "high-performance",
+    "protocol",
+    "neo",
+    "microservices"
+  ],
+  "author": "Neo Qiss <neo@example.com>",
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neo-qiss/messaging-kernel.git",
+    "directory": "bindings/nodejs"
+  },
+  "bugs": {
+    "url": "https://github.com/neo-qiss/messaging-kernel/issues"
+  },
+  "homepage": "https://github.com/neo-qiss/messaging-kernel#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "os": [
+    "linux",
+    "darwin",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ],
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "neo_protocol.linux-x64-gnu.node",
+    "neo_protocol.linux-x64-musl.node",
+    "neo_protocol.darwin-x64.node",
+    "neo_protocol.darwin-arm64.node",
+    "neo_protocol.win32-x64-msvc.node"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/jest": "^29.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0",
+    "napi-cli": "^2.0.0"
+  },
+  "dependencies": {
+    "napi": "^2.0.0"
+  },
+  "napi": {
+    "name": "neo_protocol",
+    "triples": {
+      "defaults": true,
+      "additional": [
+        "x86_64-unknown-linux-gnu",
+        "x86_64-unknown-linux-musl",
+        "x86_64-apple-darwin",
+        "aarch64-apple-darwin",
+        "x86_64-pc-windows-msvc"
+      ]
+    }
+  }
+}

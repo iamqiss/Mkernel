@@ -1,0 +1,170 @@
+version: '3.8'
+
+services:
+  # Neo Messaging Kernel core service
+  neo-core:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: neo-core
+    ports:
+      - "8080:8080"    # Neo Protocol port
+      - "9090:9090"    # Prometheus metrics
+      - "9091:9091"    # Health check port
+    volumes:
+      - neo-data:/var/lib/neo
+      - neo-logs:/var/log/neo
+      - ./config/neo.conf:/etc/neo/neo.conf:ro
+      - ./config/logging.conf:/etc/neo/logging.conf:ro
+    environment:
+      - NEO_LOG_LEVEL=info
+      - NEO_ENV=production
+      - NEO_CLUSTER_ID=neo-cluster-1
+      - NEO_NODE_ID=neo-node-1
+    networks:
+      - neo-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: neo-prometheus
+    ports:
+      - "9092:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - neo-network
+    restart: unless-stopped
+
+  # Grafana for metrics visualization
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: neo-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - neo-network
+    restart: unless-stopped
+
+  # Jaeger for distributed tracing
+  jaeger:
+    image: jaegertracing/all-in-one:1.47
+    container_name: neo-jaeger
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "14268:14268"  # Jaeger collector
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - neo-network
+    restart: unless-stopped
+
+  # Redis for caching and session storage
+  redis:
+    image: redis:7-alpine
+    container_name: neo-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - neo-network
+    restart: unless-stopped
+
+  # Example user service
+  user-service:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.example
+    container_name: neo-user-service
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./examples/user-service:/app/service:ro
+    environment:
+      - NEO_SERVER_ADDRESS=neo-core:8080
+      - NEO_SERVICE_NAME=user-service
+      - NEO_LOG_LEVEL=info
+    networks:
+      - neo-network
+    depends_on:
+      - neo-core
+    restart: unless-stopped
+
+  # Example order service
+  order-service:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.example
+    container_name: neo-order-service
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./examples/order-service:/app/service:ro
+    environment:
+      - NEO_SERVER_ADDRESS=neo-core:8080
+      - NEO_SERVICE_NAME=order-service
+      - NEO_LOG_LEVEL=info
+    networks:
+      - neo-network
+    depends_on:
+      - neo-core
+    restart: unless-stopped
+
+  # Load balancer (Nginx)
+  nginx:
+    image: nginx:alpine
+    container_name: neo-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/ssl:/etc/nginx/ssl:ro
+    networks:
+      - neo-network
+    depends_on:
+      - neo-core
+    restart: unless-stopped
+
+volumes:
+  neo-data:
+    driver: local
+  neo-logs:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  neo-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
