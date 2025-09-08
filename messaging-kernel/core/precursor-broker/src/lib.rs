@@ -27,6 +27,16 @@ pub mod producer;
 pub mod storage;
 pub mod replication;
 pub mod cluster;
+pub mod memory;
+pub mod segment_storage;
+pub mod compression;
+pub mod networking;
+pub mod consumer_groups;
+pub mod monitoring;
+pub mod enhanced_broker;
+pub mod security;
+pub mod consensus;
+pub mod advanced_replication;
 
 pub use error::Error;
 pub use queue::*;
@@ -36,6 +46,16 @@ pub use producer::*;
 pub use storage::*;
 pub use replication::*;
 pub use cluster::*;
+pub use memory::*;
+pub use segment_storage::*;
+pub use compression::*;
+pub use networking::*;
+pub use consumer_groups::*;
+pub use monitoring::*;
+pub use enhanced_broker::*;
+pub use security::*;
+pub use consensus::*;
+pub use advanced_replication::*;
 
 /// Result type for this crate
 pub type Result<T> = std::result::Result<T, Error>;
