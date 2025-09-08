@@ -96,4 +96,32 @@ pub enum Error {
     /// Internal error
     #[error("Internal error: {0}")]
     Internal(String),
+    
+    /// Cluster not found
+    #[error("Cluster not found: {0}")]
+    ClusterNotFound(String),
+    
+    /// Cluster unreachable
+    #[error("Cluster unreachable: {0}")]
+    ClusterUnreachable(String),
+    
+    /// Replication error
+    #[error("Replication error: {0}")]
+    Replication(String),
+    
+    /// Service mesh error
+    #[error("Service mesh error: {0}")]
+    ServiceMesh(String),
+    
+    /// Load balancing error
+    #[error("Load balancing error: {0}")]
+    LoadBalancing(String),
+    
+    /// Disaster recovery error
+    #[error("Disaster recovery error: {0}")]
+    DisasterRecovery(String),
+    
+    /// Network segmentation error
+    #[error("Network segmentation error: {0}")]
+    NetworkSegmentation(String),
 }

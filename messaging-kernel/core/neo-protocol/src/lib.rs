@@ -26,6 +26,9 @@ pub mod server;
 pub mod codec;
 pub mod security;
 pub mod monitoring;
+pub mod cluster;
+pub mod enterprise;
+pub mod sla_compliance;
 
 pub use error::Error;
 pub use message::*;
@@ -35,6 +38,9 @@ pub use server::*;
 pub use codec::*;
 pub use security::*;
 pub use monitoring::*;
+pub use cluster::*;
+pub use enterprise::*;
+pub use sla_compliance::*;
 
 /// Result type for this crate
 pub type Result<T> = std::result::Result<T, Error>;
