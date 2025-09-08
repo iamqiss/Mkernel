@@ -453,8 +453,7 @@ mod tests {
         let mut serializer = QissSerializer::new();
         let data = serializer.serialize(&42u32).unwrap();
         
-        let deserializer = QissDeserializer;
-        let value: u32 = deserializer.deserialize(&data).unwrap();
+        let value: u32 = QissDeserializer::deserialize(&data).unwrap();
         
         assert_eq!(value, 42);
     }
@@ -465,8 +464,7 @@ mod tests {
         let original = "Hello, Qiss!".to_string();
         let data = serializer.serialize(&original).unwrap();
         
-        let deserializer = QissDeserializer;
-        let deserialized: String = deserializer.deserialize(&data).unwrap();
+        let deserialized: String = QissDeserializer::deserialize(&data).unwrap();
         
         assert_eq!(deserialized, original);
     }
@@ -477,8 +475,7 @@ mod tests {
         let original = vec![1u32, 2, 3, 4, 5];
         let data = serializer.serialize(&original).unwrap();
         
-        let deserializer = QissDeserializer;
-        let deserialized: Vec<u32> = deserializer.deserialize(&data).unwrap();
+        let deserialized: Vec<u32> = QissDeserializer::deserialize(&data).unwrap();
         
         assert_eq!(deserialized, original);
     }
@@ -490,14 +487,13 @@ mod tests {
         // Test Some
         let some_value = Some(42u32);
         let data = serializer.serialize(&some_value).unwrap();
-        let deserializer = QissDeserializer;
-        let deserialized: Option<u32> = deserializer.deserialize(&data).unwrap();
+        let deserialized: Option<u32> = QissDeserializer::deserialize(&data).unwrap();
         assert_eq!(deserialized, some_value);
         
         // Test None
         let none_value: Option<u32> = None;
         let data = serializer.serialize(&none_value).unwrap();
-        let deserialized: Option<u32> = deserializer.deserialize(&data).unwrap();
+        let deserialized: Option<u32> = QissDeserializer::deserialize(&data).unwrap();
         assert_eq!(deserialized, none_value);
     }
 }

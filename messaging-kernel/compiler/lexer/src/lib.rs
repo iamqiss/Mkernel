@@ -161,11 +161,11 @@ mod tests {
         assert!(!tokens.is_empty());
         
         // Check for specific tokens
-        let token_texts: Vec<&str> = tokens.iter().map(|t| t.text).collect();
-        assert!(token_texts.contains(&"service"));
-        assert!(token_texts.contains(&"UserService"));
-        assert!(token_texts.contains(&"version"));
-        assert!(token_texts.contains(&"1.0.0"));
+        let token_texts: Vec<String> = tokens.iter().map(|t| t.text.to_string()).collect();
+        assert!(token_texts.contains(&"service".to_string()));
+        assert!(token_texts.contains(&"UserService".to_string()));
+        assert!(token_texts.contains(&"version".to_string()));
+        assert!(token_texts.contains(&"1.0.0".to_string()));
     }
 
     #[test]
@@ -231,7 +231,7 @@ mod tests {
         
         // Comments should be filtered out
         let comment_tokens: Vec<&Token> = tokens.iter()
-            .filter(|t| t.kind == TokenKind::Comment)
+            .filter(|t| matches!(t.kind, TokenKind::LineComment | TokenKind::BlockComment))
             .collect();
         
         assert_eq!(comment_tokens.len(), 2);
