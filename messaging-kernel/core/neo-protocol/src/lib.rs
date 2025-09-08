@@ -29,6 +29,10 @@ pub mod monitoring;
 pub mod cluster;
 pub mod enterprise;
 pub mod sla_compliance;
+pub mod ai_optimization;
+pub mod quantum_cryptography;
+pub mod adaptive_performance;
+pub mod enterprise_monitoring;
 
 pub use error::Error;
 pub use message::*;
@@ -41,6 +45,10 @@ pub use monitoring::*;
 pub use cluster::*;
 pub use enterprise::*;
 pub use sla_compliance::*;
+pub use ai_optimization::*;
+pub use quantum_cryptography::*;
+pub use adaptive_performance::*;
+pub use enterprise_monitoring::*;
 
 /// Result type for this crate
 pub type Result<T> = std::result::Result<T, Error>;
