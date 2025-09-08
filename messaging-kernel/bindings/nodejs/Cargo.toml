@@ -1,0 +1,27 @@
+[package]
+name = "neo-protocol-nodejs"
+version = "0.1.0"
+edition = "2021"
+authors = ["Neo Qiss"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/neo-qiss/messaging-kernel"
+description = "Node.js bindings for Neo Messaging Kernel"
+
+[lib]
+name = "neo_protocol"
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "2.0", features = ["async", "tokio_rt"] }
+napi-derive = "2.0"
+neo-protocol = { path = "../../core/neo-protocol" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+bytes = "1.0"
+anyhow = "1.0"
+thiserror = "1.0"
+tracing = "0.1"
+
+[build-dependencies]
+napi-build = "2.0"

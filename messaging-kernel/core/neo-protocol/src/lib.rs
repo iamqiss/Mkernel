@@ -25,6 +25,7 @@ pub mod client;
 pub mod server;
 pub mod codec;
 pub mod security;
+pub mod monitoring;
 
 pub use error::Error;
 pub use message::*;
@@ -33,6 +34,7 @@ pub use client::*;
 pub use server::*;
 pub use codec::*;
 pub use security::*;
+pub use monitoring::*;
 
 /// Result type for this crate
 pub type Result<T> = std::result::Result<T, Error>;

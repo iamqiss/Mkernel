@@ -1,0 +1,140 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: neo-config
+  namespace: neo-messaging
+  labels:
+    app.kubernetes.io/name: neo-messaging-kernel
+    app.kubernetes.io/component: config
+data:
+  neo.conf: |
+    # Neo Messaging Kernel Configuration
+    
+    [server]
+    address = "0.0.0.0:8080"
+    max_concurrent_requests = 1000
+    enable_compression = true
+    enable_auth = false
+    heartbeat_interval = "30s"
+    
+    [broker]
+    data_dir = "/var/lib/neo/data"
+    max_message_size = "10MB"
+    default_retention = "7d"
+    enable_persistence = true
+    enable_replication = true
+    replication_factor = 3
+    sync_replication = false
+    enable_compression = true
+    compression_level = 6
+    flush_interval = "100ms"
+    segment_size = "1MB"
+    index_interval = 4096
+    cleanup_interval = "1h"
+    
+    [cluster]
+    cluster_id = "neo-cluster"
+    node_id = "neo-node"
+    discovery_type = "kubernetes"
+    advertise_address = "neo-core-service"
+    advertise_port = 8080
+    
+    [security]
+    enable_auth = false
+    enable_authorization = false
+    enable_encryption = false
+    
+    [monitoring]
+    enable_prometheus = true
+    prometheus_port = 9090
+    enable_tracing = true
+    tracing_endpoint = "http://jaeger-collector:14268/api/traces"
+    metrics_interval = "10s"
+    health_check_interval = "30s"
+    max_latency_samples = 10000
+    enable_detailed_metrics = true
+    
+    [logging]
+    level = "info"
+    format = "json"
+    output = "stdout"
+    file_path = "/var/log/neo/neo.log"
+    max_file_size = "100MB"
+    max_files = 5
+    compress = true
+
+  logging.conf: |
+    # Logging Configuration
+    
+    [global]
+    level = "info"
+    format = "json"
+    output = "stdout"
+    
+    [appenders.console]
+    kind = "console"
+    encoder = "json"
+    
+    [appenders.file]
+    kind = "file"
+    path = "/var/log/neo/neo.log"
+    encoder = "json"
+    append = true
+    
+    [loggers.root]
+    level = "info"
+    appenders = ["console", "file"]
+    
+    [loggers.neo_protocol]
+    level = "debug"
+    appenders = ["console", "file"]
+    
+    [loggers.precursor_broker]
+    level = "debug"
+    appenders = ["console", "file"]
+
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+    
+    rule_files:
+      - "/etc/prometheus/rules/*.yml"
+    
+    scrape_configs:
+      - job_name: 'neo-core'
+        static_configs:
+          - targets: ['neo-core-service:9090']
+        scrape_interval: 5s
+        metrics_path: /metrics
+      
+      - job_name: 'neo-services'
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - neo-messaging
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name]
+            action: keep
+            regex: neo-.*-service
+          - source_labels: [__meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: metrics
+      
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
